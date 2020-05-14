@@ -8,7 +8,7 @@ import org.shogakuframework.core.annotations.Service;
 import java.util.List;
 
 @Service
-public class HeadLineServeImpl implements HeadLineService {
+public class HeadLineServiceImpl implements HeadLineService {
     @Override
     public Result<Boolean> addHeadLine(HeadLine headLine) {
         return null;

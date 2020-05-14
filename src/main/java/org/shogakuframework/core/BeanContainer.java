@@ -7,9 +7,7 @@ import org.shogakuframework.core.annotations.Service;
 import org.shogakuframework.utils.ClassUtil;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -22,7 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BeanContainer {
     private static final List<Class<? extends Annotation>> ANNOTATIONS =
             Arrays.asList(Repository.class, Component.class, Service.class, Controller.class);
+
     private final ConcurrentHashMap<Class<?>, Object> beanMap = new ConcurrentHashMap<Class<?>, Object>();
+
     private boolean loaded;
 
     private BeanContainer() {
@@ -60,6 +60,71 @@ public class BeanContainer {
         return beanMap.size();
     }
 
+    public Object addBean(Class<?> clazz, Object bean) {
+        return beanMap.put(clazz, bean);
+    }
+
+    public Object removeBean(Class<?> clazz) {
+        return beanMap.remove(clazz);
+    }
+
+    public Object getBean(Class<?> clazz) {
+        return beanMap.get(clazz);
+    }
+
+    public Set<Class<?>> getClasses() {
+        return beanMap.keySet();
+    }
+
+    public Set<Object> getBeans() {
+        return new HashSet<>(beanMap.values());
+    }
+
+    /**
+     * @param:
+     * @return: null || 长度大于0的Set<Class<?>>
+     * @description: 根据注解获取beanMap中对应的Class集合
+     */
+    public Set<Class<?>> getClassByAnnotation(Class<? extends Annotation> annotation) {
+        if (beanMap.size() == 0) {
+            return null;
+        }
+        HashSet<Class<?>> hashSet = new HashSet<>();
+        Set<Class<?>> classSet = getClasses();
+        for (Class<?> clazz : classSet) {
+            if (clazz.isAnnotationPresent(annotation)) {
+                hashSet.add(clazz);
+            }
+        }
+        return hashSet.size() > 0 ? hashSet : null;
+    }
+
+    /**
+     * @param: boolean selfInclude 如果传入的类本身也在容器中，选择是否需要包含在返回结果中
+     * @return: null || 长度大于0的Set<Class<?>>
+     * @description: 根据父类或接口获取beanMap中的子类或实现类，可以选择是否包括该接口或父类本身
+     */
+    public Set<Class<?>> getClassBySuper(Class<?> interfaceOrClass, boolean selfInclude) {
+        if (beanMap.size() == 0) {
+            return null;
+        }
+        HashSet<Class<?>> hashSet = new HashSet<>();
+        Set<Class<?>> classSet = getClasses();
+        for (Class<?> clazz : classSet) {
+            if (interfaceOrClass.isAssignableFrom(clazz)) {
+                if (clazz.equals(interfaceOrClass)) {
+                    if (selfInclude) {
+                        hashSet.add(clazz);
+                    }
+                } else {
+                    hashSet.add(clazz);
+                }
+            }
+        }
+
+        return hashSet.size() > 0 ? hashSet : null;
+    }
+
     private enum ContainerHolder {
         HOLDER;
         private BeanContainer instance;
@@ -68,4 +133,5 @@ public class BeanContainer {
             this.instance = new BeanContainer();
         }
     }
+
 }
