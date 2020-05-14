@@ -1,4 +1,4 @@
-package org.shogakuframework.annotations;
+package org.shogakuframework.core.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,12 +7,12 @@ import java.lang.annotation.Target;
 
 /**
  * @author throne
- * @packageName org.shogakuframework.annotations
- * @className Repository
+ * @packageName org.shogakuframework.core.annotations
+ * @className Controller
  * @date 2020/5/13 14:58
  * @description
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Repository {
+public @interface Controller {
 }

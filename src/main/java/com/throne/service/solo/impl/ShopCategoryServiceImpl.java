@@ -3,9 +3,11 @@ package com.throne.service.solo.impl;
 import com.throne.entity.bo.ShopCategory;
 import com.throne.entity.dto.Result;
 import com.throne.service.solo.ShopCategorySerivce;
+import org.shogakuframework.core.annotations.Service;
 
 import java.util.List;
 
+@Service
 public class ShopCategoryServiceImpl implements ShopCategorySerivce {
     @Override
     public Result<Boolean> addShopCategory(ShopCategory shopCategory) {
