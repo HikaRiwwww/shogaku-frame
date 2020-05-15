@@ -7,12 +7,17 @@ import com.throne.entity.dto.Result;
 import com.throne.service.combine.HeadLineShopCategoryCombineService;
 import com.throne.service.solo.HeadLineService;
 import com.throne.service.solo.ShopCategorySerivce;
+import org.shogakuframework.core.annotations.Service;
+import org.shogakuframework.inject.annotations.AutoWired;
 
 import java.util.List;
 
+@Service
 public class HeadLineShopCategoryCombineServiceImpl implements HeadLineShopCategoryCombineService {
 
+    @AutoWired
     private HeadLineService headLineService;
+    @AutoWired
     private ShopCategorySerivce shopCategorySerivce;
 
     @Override

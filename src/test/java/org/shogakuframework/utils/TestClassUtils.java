@@ -13,7 +13,7 @@ import java.util.Set;
  * @date 2020/5/14 9:52
  * @description
  */
-public class ClassUtilsTest {
+public class TestClassUtils {
 
     @Test
     public void extractPackageClassTest() throws Exception {

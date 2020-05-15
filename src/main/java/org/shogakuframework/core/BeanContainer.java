@@ -5,6 +5,7 @@ import org.shogakuframework.core.annotations.Controller;
 import org.shogakuframework.core.annotations.Repository;
 import org.shogakuframework.core.annotations.Service;
 import org.shogakuframework.utils.ClassUtil;
+import org.shogakuframework.utils.Validator;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -86,11 +87,14 @@ public class BeanContainer {
      * @description: 根据注解获取beanMap中对应的Class集合
      */
     public Set<Class<?>> getClassByAnnotation(Class<? extends Annotation> annotation) {
-        if (beanMap.size() == 0) {
+        if (Validator.isEmptyMap(beanMap)) {
             return null;
         }
         HashSet<Class<?>> hashSet = new HashSet<>();
         Set<Class<?>> classSet = getClasses();
+        if (Validator.isEmptySet(classSet)){
+            return null;
+        }
         for (Class<?> clazz : classSet) {
             if (clazz.isAnnotationPresent(annotation)) {
                 hashSet.add(clazz);
@@ -105,11 +109,14 @@ public class BeanContainer {
      * @description: 根据父类或接口获取beanMap中的子类或实现类，可以选择是否包括该接口或父类本身
      */
     public Set<Class<?>> getClassBySuper(Class<?> interfaceOrClass, boolean selfInclude) {
-        if (beanMap.size() == 0) {
+        if (Validator.isEmptyMap(beanMap)) {
             return null;
         }
         HashSet<Class<?>> hashSet = new HashSet<>();
         Set<Class<?>> classSet = getClasses();
+        if (Validator.isEmptySet(classSet)){
+            return null;
+        }
         for (Class<?> clazz : classSet) {
             if (interfaceOrClass.isAssignableFrom(clazz)) {
                 if (clazz.equals(interfaceOrClass)) {

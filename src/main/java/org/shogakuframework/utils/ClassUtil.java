@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashSet;
@@ -104,7 +105,7 @@ public class ClassUtil {
      * @param:
      * @return:
      * @description: 由一个Class类获取其实例，支持根据accessible选择是否实例化private类
-                    todo: 暂不支持调用有参数的构造获取实例
+     * todo: 暂不支持调用有参数的构造获取实例
      */
     public static <T> T loadInstance(Class<?> clazz, boolean accessible) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Constructor<?> constructor = clazz.getDeclaredConstructor();
@@ -112,5 +113,15 @@ public class ClassUtil {
         return (T) constructor.newInstance();
 
     }
+
+    public static void setField(Object targetBean, Field field, Object value, boolean accessible) {
+        field.setAccessible(accessible);
+        try {
+            field.set(targetBean, value);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

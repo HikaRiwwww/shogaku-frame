@@ -2,6 +2,7 @@ package com.throne.entity.dto;
 
 import com.throne.entity.bo.HeadLine;
 import com.throne.entity.bo.ShopCategory;
+import org.shogakuframework.core.annotations.Repository;
 
 import java.util.List;
 
