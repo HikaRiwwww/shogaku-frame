@@ -132,6 +132,9 @@ public class BeanContainer {
         return hashSet.size() > 0 ? hashSet : null;
     }
 
+    /**
+     * 通过枚举保证容器是单例
+     */
     private enum ContainerHolder {
         HOLDER;
         private BeanContainer instance;

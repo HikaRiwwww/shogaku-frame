@@ -35,7 +35,7 @@ public class DependencyInjector {
         }
         for (Class<?> clazz : classSet) {
             Field[] fields = clazz.getDeclaredFields();
-            if (Validator.isEmptyList(fields)) {
+            if (Validator.isEmptyArray(fields)) {
                 continue;
             }
             for (Field field : fields) {

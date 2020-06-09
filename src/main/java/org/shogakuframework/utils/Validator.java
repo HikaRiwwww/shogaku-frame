@@ -22,7 +22,13 @@ public class Validator {
         return map == null || map.isEmpty();
     }
 
-    public static boolean isEmptyList(Object[] list){
-        return list==null || list.length == 0;
+
+    public static boolean isEmptyArray(Object[] array){
+        return array==null || array.length == 0;
     }
+
+    public static boolean isEmptyList(List<?> list){
+        return list==null || list.size() == 0;
+    }
+
 }
