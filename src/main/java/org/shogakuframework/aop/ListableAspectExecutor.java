@@ -48,7 +48,7 @@ public class ListableAspectExecutor implements MethodInterceptor {
         // 正常返回则依次执行afterReturning()
         // 抛出异常则依次执行afterThrowing()
         Object returnValue = null;
-        if (Validator.isEmptyList(sortedAspectInfoList)) {
+        if (Validator.isEmpty(sortedAspectInfoList)) {
             return null;
         }
         invokeBeforeAdvices(method, args);

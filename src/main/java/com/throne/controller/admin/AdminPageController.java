@@ -4,6 +4,7 @@ import com.throne.entity.bo.HeadLine;
 import com.throne.entity.dto.Result;
 import com.throne.service.solo.HeadLineService;
 import com.throne.service.solo.ShopCategorySerivce;
+import org.shogakuframework.aop.annotation.Aspect;
 import org.shogakuframework.core.annotations.Controller;
 import org.shogakuframework.inject.annotations.AutoWired;
 
@@ -25,7 +26,7 @@ public class AdminPageController {
         return headLineService;
     }
 
-    public ShopCategorySerivce getShopCategorySerivce() {
+    public ShopCategorySerivce getShopCategoryService() {
         return shopCategorySerivce;
     }
 

@@ -1,4 +1,5 @@
 package org.shogakuframework.utils;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,22 +14,19 @@ import java.util.Set;
  */
 public class Validator {
 
-    public static boolean isEmptySet(Set<?> set){
+    public static boolean isEmpty(Set<?> set) {
         return set == null || set.size() == 0;
     }
 
-
-    public static boolean isEmptyMap(Map<?,?> map){
+    public static boolean isEmpty(Map<?, ?> map) {
         return map == null || map.isEmpty();
     }
 
-
-    public static boolean isEmptyArray(Object[] array){
-        return array==null || array.length == 0;
+    public static boolean isEmpty(Object[] array) {
+        return array == null || array.length == 0;
     }
 
-    public static boolean isEmptyList(List<?> list){
-        return list==null || list.size() == 0;
+    public static boolean isEmpty(List<?> list) {
+        return list == null || list.size() == 0;
     }
-
 }

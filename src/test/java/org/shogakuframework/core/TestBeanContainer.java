@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.shogakuframework.aop.annotation.Aspect;
 import org.shogakuframework.core.annotations.Component;
 import org.shogakuframework.core.annotations.Service;
 
@@ -72,5 +73,11 @@ public class TestBeanContainer {
     public void Test5getClassBySuper() {
         Set<Class<?>> classSet = beanContainer.getClassBySuper(HeadLineService.class, false);
         System.out.println(classSet.size());
+    }
+
+    @Test
+    public void Test6getAspectSet(){
+        Set<Class<?>> aspectSet = beanContainer.getClassByAnnotation(Aspect.class);
+        System.out.println(aspectSet);
     }
 }

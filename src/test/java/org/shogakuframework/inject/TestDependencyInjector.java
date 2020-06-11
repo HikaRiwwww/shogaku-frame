@@ -1,7 +1,6 @@
 package org.shogakuframework.inject;
 
 import com.throne.controller.admin.AdminPageController;
-import com.throne.controller.common.MainPageControler;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -38,10 +37,10 @@ public class TestDependencyInjector {
         AdminPageController adminPageController =(AdminPageController) beanContainer.getBean(AdminPageController.class);
         assert adminPageController != null;
         assert adminPageController.getHeadLineService() == null;
-        assert adminPageController.getShopCategorySerivce() == null;
+        assert adminPageController.getShopCategoryService() == null;
         new DependencyInjector().doIoc(true);
         assert adminPageController.getHeadLineService() != null;
-        assert adminPageController.getShopCategorySerivce() != null;
+        assert adminPageController.getShopCategoryService() != null;
     }
 
 }

@@ -9,6 +9,9 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Aspect {
+
+    // 针对特定注解进行织入，
+    // 例如，当value为@Controller时，切面逻辑将织入被@Controller标记的类
     Class<? extends Annotation> value();
 
 }

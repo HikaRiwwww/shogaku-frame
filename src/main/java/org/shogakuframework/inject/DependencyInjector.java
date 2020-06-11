@@ -30,12 +30,12 @@ public class DependencyInjector {
      */
     public void doIoc(boolean accessible) throws Exception {
         Set<Class<?>> classSet = beanContainer.getClasses();
-        if (Validator.isEmptySet(classSet)) {
+        if (Validator.isEmpty(classSet)) {
             return;
         }
         for (Class<?> clazz : classSet) {
             Field[] fields = clazz.getDeclaredFields();
-            if (Validator.isEmptyArray(fields)) {
+            if (Validator.isEmpty(fields)) {
                 continue;
             }
             for (Field field : fields) {
@@ -87,7 +87,7 @@ public class DependencyInjector {
      */
     private Class<?> getImplementedClass(Class<?> fieldClass, String autoWiredValue) {
         Set<Class<?>> classSet = beanContainer.getClassBySuper(fieldClass, false);
-        if (Validator.isEmptySet(classSet)) {
+        if (Validator.isEmpty(classSet)) {
             return null;
         } else {
             // todo: Spring还考虑了多个实现类的情况，@Qualifier

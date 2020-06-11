@@ -1,5 +1,6 @@
 package org.shogakuframework.core;
 
+import org.shogakuframework.aop.annotation.Aspect;
 import org.shogakuframework.core.annotations.Component;
 import org.shogakuframework.core.annotations.Controller;
 import org.shogakuframework.core.annotations.Repository;
@@ -20,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BeanContainer {
     private static final List<Class<? extends Annotation>> ANNOTATIONS =
-            Arrays.asList(Repository.class, Component.class, Service.class, Controller.class);
+            Arrays.asList(Repository.class, Component.class, Service.class, Controller.class, Aspect.class);
 
     private final ConcurrentHashMap<Class<?>, Object> beanMap = new ConcurrentHashMap<Class<?>, Object>();
 
@@ -87,12 +88,12 @@ public class BeanContainer {
      * @description: 根据注解获取beanMap中对应的Class集合
      */
     public Set<Class<?>> getClassByAnnotation(Class<? extends Annotation> annotation) {
-        if (Validator.isEmptyMap(beanMap)) {
+        if (Validator.isEmpty(beanMap)) {
             return null;
         }
         HashSet<Class<?>> hashSet = new HashSet<>();
         Set<Class<?>> classSet = getClasses();
-        if (Validator.isEmptySet(classSet)){
+        if (Validator.isEmpty(classSet)){
             return null;
         }
         for (Class<?> clazz : classSet) {
@@ -109,12 +110,12 @@ public class BeanContainer {
      * @description: 根据父类或接口获取beanMap中的子类或实现类，可以选择是否包括该接口或父类本身
      */
     public Set<Class<?>> getClassBySuper(Class<?> interfaceOrClass, boolean selfInclude) {
-        if (Validator.isEmptyMap(beanMap)) {
+        if (Validator.isEmpty(beanMap)) {
             return null;
         }
         HashSet<Class<?>> hashSet = new HashSet<>();
         Set<Class<?>> classSet = getClasses();
-        if (Validator.isEmptySet(classSet)){
+        if (Validator.isEmpty(classSet)){
             return null;
         }
         for (Class<?> clazz : classSet) {
