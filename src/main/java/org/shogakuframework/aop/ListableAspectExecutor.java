@@ -8,6 +8,7 @@ import org.shogakuframework.utils.Validator;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class ListableAspectExecutor implements MethodInterceptor {
      * @return 正序排列后的AspectInfo集合
      */
     private List<AspectInfo> sorted(List<AspectInfo> aspectInfoList) {
-        Collections.sort(aspectInfoList, new Comparator<AspectInfo>() {
+        aspectInfoList.sort(new Comparator<AspectInfo>() {
             @Override
             public int compare(AspectInfo o1, AspectInfo o2) {
                 return o1.getOrderIndex() - o2.getOrderIndex();
@@ -48,8 +49,10 @@ public class ListableAspectExecutor implements MethodInterceptor {
         // 正常返回则依次执行afterReturning()
         // 抛出异常则依次执行afterThrowing()
         Object returnValue = null;
+        collectAccurateMatchedMethodList(method);
         if (Validator.isEmpty(sortedAspectInfoList)) {
-            return null;
+            // 如果sortedAspectInfoList就直接返回，却不执行被代理的方法本身，是不合理的
+            return methodProxy.invokeSuper(proxy, args);
         }
         invokeBeforeAdvices(method, args);
         try {
@@ -60,6 +63,19 @@ public class ListableAspectExecutor implements MethodInterceptor {
             invokeAfterThrowingAdvices(method, args, e);
         }
         return returnValue;
+    }
+
+    private void collectAccurateMatchedMethodList(Method method) {
+        if (Validator.isEmpty(sortedAspectInfoList)) {
+            return;
+        }
+        Iterator<AspectInfo> iterator = sortedAspectInfoList.iterator();
+        while (iterator.hasNext()) {
+            AspectInfo aspectInfo = iterator.next();
+            if (!aspectInfo.getPointcutLocator().accurateMatches(method)) {
+                sortedAspectInfoList.remove(aspectInfo);
+            }
+        }
     }
 
     private void invokeAfterThrowingAdvices(Method method, Object[] args, Exception e) throws Throwable {

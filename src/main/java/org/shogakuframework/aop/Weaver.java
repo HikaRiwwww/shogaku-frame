@@ -31,20 +31,53 @@ public class Weaver {
         HashMap<Class<? extends Annotation>, List<AspectInfo>> categorizedMap = new HashMap<>();
         // 获取所有被@Aspect标记的类
         Set<Class<?>> aspectSet = beanContainer.getClassByAnnotation(Aspect.class);
-        for (Class<?> aspectClazz : aspectSet) {
-            // 检验这个被标记的clazz是否合法
-            if (isLegalAspect(aspectClazz)) {
-                categorizeAspect(categorizedMap, aspectClazz);
+        if (Validator.isEmpty(aspectSet)) {
+            return;
+        }
+        List<AspectInfo> aspectInfoList = packAsAspectInfoList(aspectSet);
+        Set<Class<?>> classes = beanContainer.getClasses();
+        for (Class<?> clazz : classes) {
+            if (!clazz.isAnnotationPresent(Aspect.class)) {
+                List<AspectInfo> roughMatchedList = collectRoughMatchedForSpecificClass(aspectInfoList, clazz);
+                // 织入
+                wrapIfNecessary(roughMatchedList, clazz);
+            }
+        }
+    }
+
+    private void wrapIfNecessary(List<AspectInfo> roughMatchedList, Class<?> clazz) {
+        if (!Validator.isEmpty(roughMatchedList)) {
+            ListableAspectExecutor listableAspectExecutor = new ListableAspectExecutor(clazz, roughMatchedList);
+            Object bean = ProxyCreator.createProxy(clazz, listableAspectExecutor);
+            beanContainer.addBean(clazz, bean);
+        }
+    }
+
+    private List<AspectInfo> collectRoughMatchedForSpecificClass(List<AspectInfo> aspectInfoList, Class<?> clazz) {
+        List<AspectInfo> roughMatchedList = new ArrayList<>();
+        for (AspectInfo aspectInfo : aspectInfoList) {
+            if (aspectInfo.getPointcutLocator().roughMatches(clazz)) {
+                roughMatchedList.add(aspectInfo);
+            }
+        }
+        return roughMatchedList;
+    }
+
+    private List<AspectInfo> packAsAspectInfoList(Set<Class<?>> aspectSet) {
+        List<AspectInfo> aspectInfoList = new ArrayList<>();
+        for (Class<?> aspect : aspectSet) {
+            if (isLegalAspect(aspect)) {
+                Aspect aspectTag = aspect.getAnnotation(Aspect.class);
+                Order orderTag = aspect.getAnnotation(Order.class);
+                DefaultAspect defaultAspect = (DefaultAspect) beanContainer.getBean(aspect);
+                AspectInfo aspectInfo = new AspectInfo(defaultAspect, orderTag.value(), new PointcutLocator(aspectTag.pointcut()));
+                aspectInfoList.add(aspectInfo);
             } else {
-                throw new RuntimeException("当前切面类不满足以下规则:" +
-                        "继承DefaultAspect；被@Aspect和@Order标记；作用对象为非@Aspect注解所标记的类");
+                throw new RuntimeException("当前类缺少@Order注解，或未继承自DefaultAspect类");
             }
         }
-        if (!Validator.isEmpty(categorizedMap)) {
-            for (Class<? extends Annotation> category : categorizedMap.keySet()) {
-                weaveByCategory(category, categorizedMap.get(category));
-            }
-        }
+        return aspectInfoList;
+
     }
 
     private void weaveByCategory(Class<? extends Annotation> category, List<AspectInfo> aspectInfos) {
@@ -55,21 +88,6 @@ public class Weaver {
                 Object proxyBean = ProxyCreator.createProxy(clazz, aspectExecutor);
                 beanContainer.addBean(clazz, proxyBean);
             }
-        }
-    }
-
-    private void categorizeAspect(HashMap<Class<? extends Annotation>, List<AspectInfo>> categorizedMap, Class<?> aspectClazz) {
-        Order orderTag = aspectClazz.getAnnotation(Order.class);
-        Aspect aspectTag = aspectClazz.getAnnotation(Aspect.class);
-        DefaultAspect aspect = (DefaultAspect) beanContainer.getBean(aspectClazz);
-        AspectInfo aspectInfo = new AspectInfo(aspect, orderTag.value());
-        Class<? extends Annotation> weaveTarget = aspectTag.value();
-        if (!categorizedMap.containsKey(weaveTarget)) {
-            List<AspectInfo> aspectInfoList = new ArrayList<>();
-            aspectInfoList.add(aspectInfo);
-            categorizedMap.put(weaveTarget, aspectInfoList);
-        } else {
-            categorizedMap.get(weaveTarget).add(aspectInfo);
         }
     }
 
@@ -85,8 +103,7 @@ public class Weaver {
     private boolean isLegalAspect(Class<?> aspectClazz) {
         return aspectClazz.isAnnotationPresent(Aspect.class) &&
                 aspectClazz.isAnnotationPresent(Order.class) &&
-                DefaultAspect.class.isAssignableFrom(aspectClazz) &&
-                aspectClazz.getAnnotation(Aspect.class).value() != Aspect.class;
+                DefaultAspect.class.isAssignableFrom(aspectClazz);
     }
 
 }

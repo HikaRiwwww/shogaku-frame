@@ -7,7 +7,7 @@ import org.shogakuframework.core.annotations.Controller;
 
 import java.lang.reflect.Method;
 
-@Aspect(value = Controller.class)
+@Aspect(pointcut = "within(com.throne.controller.aop_demo.*)")
 @Order(value = 1)
 public class ControllerAspect2 extends DefaultAspect {
     @Override
